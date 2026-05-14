@@ -1,5 +1,5 @@
 import os
-
+import json
 from services.session_memory import (
     get_conversation,
     save_conversation
@@ -52,7 +52,11 @@ def chat_completion(system_prompt, user_input, session_id):
 
         save_conversation(session_id, conversation)
 
-        return str(ai_message)
+        try:
+            return json.loads(ai_message)
+
+        except:
+            return str(ai_message)
 
     except Exception as e:
 
