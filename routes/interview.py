@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from services.auth import verify_api_key
 from fastapi.responses import JSONResponse
 from services.session_memory import (
-    conversation_memory,
+    save_conversation,
     interview_state,
     init_interview
 )
@@ -52,12 +52,15 @@ async def start_interview():
 
     init_interview(session_id)
 
-    conversation_memory[session_id] = [
-    {
-        "role": "assistant",
-        "content": first_question
-    }
-    ]
+    save_conversation(
+        session_id,
+        [
+            {
+                "role": "assistant",
+                "content": first_question
+            }
+        ]
+    )
 
     return success_response({
         "type": "start",
