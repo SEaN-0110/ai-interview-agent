@@ -1,7 +1,9 @@
 import os
-import json
 
-from services.session_memory import conversation_memory
+from services.session_memory import (
+    get_conversation,
+    save_conversation
+)
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -18,13 +20,14 @@ def chat_completion(system_prompt, user_input, session_id):
 
     try:
 
-        if session_id not in conversation_memory:
-            conversation_memory[session_id] = []
+        conversation = get_conversation(session_id)
 
-        conversation_memory[session_id].append({
+        conversation.append({
             "role": "user",
             "content": user_input
         })
+
+        save_conversation(session_id, conversation)
 
         messages = [
             {
@@ -33,7 +36,7 @@ def chat_completion(system_prompt, user_input, session_id):
             }
         ]
 
-        messages.extend(conversation_memory[session_id])
+        messages.extend(conversation)
 
         response = client.chat.completions.create(
             model=MODEL,
@@ -42,10 +45,12 @@ def chat_completion(system_prompt, user_input, session_id):
 
         ai_message = response.choices[0].message.content
 
-        conversation_memory[session_id].append({
+        conversation.append({
             "role": "assistant",
             "content": str(ai_message)
         })
+
+        save_conversation(session_id, conversation)
 
         return str(ai_message)
 

@@ -1,5 +1,7 @@
 import time
-conversation_memory = {}
+from services.redis_service import redis
+import json
+conversation_memory = None
 interview_state = {}
 
 def init_interview(session_id):
@@ -25,3 +27,18 @@ def init_interview(session_id):
 
         "interview_finished": False
     }
+       
+def save_conversation(session_id, data):
+    redis.set(
+        f"conversation:{session_id}",
+        json.dumps(data)
+    )
+
+
+def get_conversation(session_id):
+    data = redis.get(f"conversation:{session_id}")
+
+    if data:
+        return json.loads(data)
+
+    return []

@@ -5,3 +5,5 @@ python-dotenv
 openai
 requests
 gunicorn
+redis
+upstash-redis
