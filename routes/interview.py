@@ -1,5 +1,6 @@
 import uuid
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from services.auth import verify_api_key
 from fastapi.responses import JSONResponse
 from services.session_memory import (
     conversation_memory,
@@ -39,7 +40,10 @@ def error_response(message="error", status_code=400):
         }
     )
 
-@router.post("/start")
+@router.post(
+    "/start",
+    dependencies=[Depends(verify_api_key)]
+)
 async def start_interview():
 
     session_id = str(uuid.uuid4())
@@ -130,7 +134,10 @@ class InterviewRequest(BaseModel):
     session_id: str
 
 
-@router.post("/answer")
+@router.post(
+    "/answer",
+    dependencies=[Depends(verify_api_key)]
+)
 def interview(data: InterviewRequest):
 
     try:
@@ -189,7 +196,10 @@ def interview(data: InterviewRequest):
 
         return error_response(str(e), 500)
     
-@router.get("/report/{session_id}")
+@router.get(
+    "/report/{session_id}",
+    dependencies=[Depends(verify_api_key)]
+)
 async def get_report(session_id: str):
 
     session = interview_state.get(session_id)
