@@ -40,17 +40,32 @@ def error_response(message="error", status_code=400):
         }
     )
 
+from pydantic import BaseModel
+
+class StartInterviewRequest(BaseModel):
+    candidate_name: str = ""
+    resume_summary: str = ""
+    skills: str = ""
+    target_role: str = ""
+    jd_summary: str = ""
+
 @router.post(
     "/start",
     dependencies=[Depends(verify_api_key)]
 )
-async def start_interview():
+async def start_interview(data: StartInterviewRequest):
 
     session_id = str(uuid.uuid4())
 
     first_question = "請先簡單介紹一下你自己，以及你熟悉的技術。"
 
     init_interview(session_id)
+
+    interview_state[session_id]["candidate_name"] = data.candidate_name
+    interview_state[session_id]["resume_summary"] = data.resume_summary
+    interview_state[session_id]["skills"] = data.skills
+    interview_state[session_id]["target_role"] = data.target_role
+    interview_state[session_id]["jd_summary"] = data.jd_summary
 
     save_conversation(
         session_id,
@@ -130,7 +145,7 @@ def interview_flow(
     }
 
 
-from pydantic import BaseModel
+
 
 class InterviewRequest(BaseModel):
     answer: str
