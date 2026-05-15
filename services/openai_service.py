@@ -22,6 +22,9 @@ def chat_completion(system_prompt, user_input, session_id):
 
         conversation = get_conversation(session_id)
 
+        if conversation is None:
+            conversation = []
+
         conversation.append({
             "role": "user",
             "content": user_input

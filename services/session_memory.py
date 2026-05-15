@@ -42,3 +42,10 @@ def get_conversation(session_id):
         return json.loads(data)
 
     return []
+
+def clear_conversation(session_id):
+    redis.delete(f"conversation:{session_id}")
+
+
+def conversation_exists(session_id):
+    return redis.exists(f"conversation:{session_id}")

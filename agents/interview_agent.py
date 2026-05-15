@@ -14,7 +14,6 @@ from services.score_manager import (
 )
 
 from services.session_memory import (
-    conversation_memory,
     interview_state,
     init_interview
 )
