@@ -382,6 +382,45 @@ def generate_interview_response(
         decision = "FOLLOW_UP"
         system_prompt = FOLLOW_UP_RESPONSE_PROMPT
 
+    session = interview_state.get(session_id, {})
+
+    candidate_name = session.get("candidate_name", "")
+    resume_summary = session.get("resume_summary", "")
+    skills = session.get("skills", "")
+    target_role = session.get("target_role", "")
+    jd_summary = session.get("jd_summary", "")
+
+    dynamic_context = f"""
+
+    候選人資訊：
+
+    姓名：
+    {candidate_name}
+
+    應徵職位：
+    {target_role}
+
+    技能：
+    {skills}
+
+    履歷摘要：
+    {resume_summary}
+
+    JD需求：
+    {jd_summary}
+
+    請根據以上背景進行真實技術面試。
+
+    規則：
+
+    - 問題要根據候選人技能動態調整
+    - 根據 JD 要求深入追問
+    - 優先詢問候選人履歷中提到的技術
+    - 問題保持真人技術面試風格
+    """
+
+    system_prompt += dynamic_context
+
 
     current_topic = interview_state[session_id]["current_topic"]
 
