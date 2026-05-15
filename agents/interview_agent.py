@@ -219,30 +219,61 @@ NEXT_QUESTION_RESPONSE_PROMPT = """
 """
 
 FINAL_REPORT_PROMPT = """
-你是一位資深技術主管。
+你是一位資深 AI 技術主管。
 
-請根據整場面試紀錄：
+請根據整場面試紀錄，
+輸出結構化 JSON 評估報告。
 
-1. 分析候選人優勢
-2. 分析技術弱點
-3. 評估溝通能力
-4. 評估技術深度
-5. 給出學習建議
-6. 判斷是否錄取
+評估面向：
 
-請用以下格式：
+1. overall_score
+整體表現分數（0~100）
 
-【整體評價】
+2. technical_skill
+技術能力（0~100）
 
-【技術優勢】
+3. communication
+表達能力（0~100）
 
-【技術弱點】
+4. problem_solving
+問題解決能力（0~100）
 
-【建議】
+5. strengths
+候選人優勢
 
-【錄取結果】
+6. weaknesses
+候選人弱點
 
-使用繁體中文。
+7. learning_suggestions
+學習建議
+
+8. hire_decision
+YES / NO
+
+請只輸出 JSON。
+
+格式：
+
+{
+  "overall_score": 80,
+  "technical_skill": 82,
+  "communication": 75,
+  "problem_solving": 78,
+  "strengths": [
+    "..."
+  ],
+  "weaknesses": [
+    "..."
+  ],
+  "learning_suggestions": [
+    "..."
+  ],
+  "hire_decision": "YES"
+}
+
+不要輸出 markdown。
+不要輸出 ```json。
+只輸出 JSON。
 """
 
 
@@ -507,10 +538,14 @@ def generate_final_report(session_id):
         session_id
     )
 
+    print(type(result))
+    print(result)
+
     if not result:
         result = "面試報告生成失敗"
 
     return {
         "average_score": get_average_score(session_id),
-        "report": result
+        "report": result,
+        "report_type": "structured_json"
     }
